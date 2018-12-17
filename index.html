@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en" >
+
+<head>
+  <meta charset="UTF-8">
+  <title>Command Quest</title>
+
+      <link rel="stylesheet" href="css/style.css">
+      <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+      <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+      <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+      <link rel="manifest" href="/site.webmanifest">
+      <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#e242f4">
+      <meta name="msapplication-TileColor" content="#da532c">
+      <meta name="theme-color" content="#ffffff">
+
+</head>
+
+<body>
+
+  <!--
+  Based on the "ASCII 3D Again" mechanic from Squidi's Three Hundred Mechanics:
+  http://www.squidi.net/three/entry.php?id=251
+
+  I wanted to try this with HTML rather than canvas, and introduce some other elements
+-->
+
+<div id="game"></div>
+<div id="log" class="log"></div>
+<template id="map" data-player-start="3,3">
+_____________________________________________________
+#..............................................@....#
+#......................@............................#
+#.........@.........................................#
+#......................................@............#
+#...................................................#
+_____________________________________________________
+</template>
+<script type="application/json" id="data">
+{"actors":[
+	{"x": 23, "y": 2, "message": "What tag are HTML images defined with?"},
+  {"x": 39, "y": 4, "message": "What does html stand for?"},
+  {"x": 10, "y": 3, "message": "What tag are numbered lists defined with?"},
+  {"x": 47, "y": 1, "message": "What property defines the type of font used?"}
+]}
+</script>
+
+<!--
+<h2>What are HTML images defined with?</h2>
+<input class="field" />
+<button class="submit">Submit</button>
+-->
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/react/15.4.2/react.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/react/15.4.2/react-dom.min.js'></script>
+
+
+
+    <script  src="js/index.js"></script>
+
+</body>
+
+</html>
