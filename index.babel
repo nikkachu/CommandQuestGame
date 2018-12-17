@@ -1,0 +1,173 @@
+const KEY_LEFT = 37;
+const KEY_UP = 38;
+const KEY_RIGHT = 39;
+const KEY_DOWN = 40;
+
+const $map = document.querySelector('#map');
+const $game = document.querySelector('#game');
+const $log = document.querySelector('#log');
+const $data = document.querySelector('#data')
+const map = $map.innerHTML.trim();
+const lines = map.split(/[\n\r]+/);
+const data = JSON.parse($data.innerHTML);
+
+let centerX = lines[0].length / 2;
+let centerY = lines.length / 2;
+
+let [playerX, playerY] = $map
+  .getAttribute('data-player-start')
+  .split(',')
+  .map(a => parseInt(a, 10));
+
+const layers = [];
+
+// After the first layer, remove dots
+const mapWithoutPlayer = map.replace(/[.@/~]/g, ' ');
+
+// Reset the canvas
+$game.innerHTML = '';
+
+// Draw the layers
+for (var i = 0; i < 3; i++) {   
+  const $layer = document.createElement('div');
+  $layer.classList.add('layer');
+  $layer.innerHTML = i === 0 ? map : mapWithoutPlayer;
+  
+  // We could just use opacity, but font colour gives us a bit more flexibility
+  // $layer.style.opacity = 1 - (0.3 * (2 - i));
+  $layer.style.color = `hsla(0, 0%, 100%, ${1 - (0.3 * (2 - i))})`;
+  
+  layers.push($layer);
+  $game.appendChild($layer);
+}
+
+function debounce(callback, wait) {
+	var timeout;
+	return function() {
+		var context = this, args = arguments;
+		var later = function() {
+			timeout = null;
+		};
+		var callNow = !timeout;
+		if (!timeout) {
+      callback.apply(context, args);
+      timeout = setTimeout(later, wait);
+    }
+	};
+}
+
+function drawPlayer() {
+  // Add the player to the bottom layer
+  let linesWithPlayer = lines.join('\n').split('\n');
+  linesWithPlayer[playerY] = lines[playerY].substr(0, playerX) + '<span class="actor-player">@</span>' + lines[playerY].substr(playerX + 1);
+  layers[0].innerHTML = linesWithPlayer.join('\n');
+  
+  // Update transforms
+  for (const i in layers) {
+    var $layer = layers[i];
+    $layer.style.transform = `scale(${1 + (0.00 * i)}) translateX(${centerX - playerX}ch) translateY(${centerY - playerY}em)`;
+  }
+}
+
+function terrainAt(x, y) {
+  return lines[y].substr(x, 1);
+}
+
+function move(xRel, yRel) {
+  const targetX = playerX + xRel;
+  const targetY = playerY + yRel;
+  const newTerrain = terrainAt(targetX, targetY);
+  if (newTerrain === '.' || newTerrain === '/') {
+    playerX += xRel;
+    playerY += yRel;
+    drawPlayer();
+  } else if (newTerrain === '@') {
+    const actor = data.actors.find(actor => actor.x === targetX && actor.y === targetY);
+    $log.innerHTML = actor.message;
+  }
+}
+  
+document.body.addEventListener('keydown', debounce(function(e) {
+  const key = parseInt(e.which, 10);
+  if (key === KEY_LEFT) move(-1, 0);
+  if (key === KEY_RIGHT) move(1, 0);
+  if (key === KEY_UP) move(0, -1);
+  if (key === KEY_DOWN) move(0, 1);
+}, 100), false);
+
+drawPlayer();
+function exercise(correctValue) {
+  // set variables
+  var submit = $(".submit");
+  var field = $("input.field");
+  // give click event to submit button
+  submit.click(function() {
+    // remove stats element
+    $(".stats").remove();   
+    // store answer status in variables
+    var correctStats = '<div class="stats">Correct!</div>';
+    var incorrectStats = '<div class="stats">Try Again.</div>';
+    // target field value
+    var value = field.val();
+    // pass correct answer through parameters
+    answerValue = correctValue;
+    // check status
+    var checkStatus = false;
+    // set condition
+    if (value === answerValue) {
+      // show the correct answer
+      $("body").append(correctStats);
+      checkStatus = true;      
+    } else {
+      // show the incorrect answer
+      $("body").append(incorrectStats);      
+    }    
+    // set colour for the answers
+    field.css({'background': checkStatus ? 'green' : 'red', 'color': '#fff' });
+    //field.attr('disabled', true);
+  });
+}
+// set the correct value
+var answer = "img";
+// execute the function
+exercise(answer);
+
+
+/*
+
+function exercise(correctValue) {
+  // set variables
+  var submit = $(".submit");
+  var field = $("input.field");
+  // give click event to submit button
+  submit.click(function() {
+    // remove stats element
+    $(".stats").remove();   
+    // store answer status in variables
+    var correctStats = '<div class="stats">Correct!</div>';
+    var incorrectStats = '<div class="stats">Try Again.</div>';
+    // target field value
+    var value = field.val();
+    // pass correct answer through parameters
+    answerValue = correctValue;
+    // check status
+    var checkStatus = false;
+    // set condition
+    if (value === answerValue) {
+      // show the correct answer
+      $("body").append(correctStats);
+      checkStatus = true;      
+    } else {
+      // show the incorrect answer
+      $("body").append(incorrectStats);      
+    }    
+    // set colour for the answers
+    field.css({'background': checkStatus ? 'green' : 'red', 'color': '#fff' });
+    //field.attr('disabled', true);
+  });
+}
+// set the correct value
+var answer = "img";
+// execute the function
+exercise(answer);
+*/
